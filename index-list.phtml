@@ -1,0 +1,40 @@
+<h1>表</h1>
+
+<!-- 搜索表单 -->
+<form>
+    <select name="dbname">
+        <option value="fy_me_cai" <?php echo _get('dbname') == 'fy_me_cai' ? 'selected' : '' ?>>me</option>
+        <option value="fy_net_cai" <?php echo _get('dbname') == 'fy_net_cai' ? 'selected' : '' ?>>net</option>
+    </select>
+    <input type="text" name="table_like" value="<?php echo _get('table_like') ?>" placeholder="表名">
+    <input type="text" name="field_like" value="<?php echo _get('field_like') ?>" placeholder="字段名">
+    <input type="submit" value="搜索">
+</form>
+
+<span class="tbl-cmt">共 <?php echo count($tables) ?> 个表</span>
+
+<!-- 搜索结果 -->
+<?php if ($tables): ?>
+    <ul>
+        <?php foreach ($tables as $t): ?>
+        <li>
+            <strong title="">
+                <a class="tbl-name" href="?trans=<?php echo $t['table'] ?>"><?php echo high_light($t['table'], _get('table_like')) ?></a>
+            </strong>
+            <span class="tbl-cmt" ><?php echo $t['comment'] ?></span>
+            <?php if (isset($t['field_matches']) && $t['field_matches']): ?>
+                <ul>
+                    <?php foreach ($t['field_matches'] as $f): ?>
+                        <li>
+                            <span class="f-name"><?php echo high_light($f['Field'], _get('field_like')) ?></span>
+                            <span class="f-cmt"><?php echo $f['Comment'] ?></span>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+            <?php endif ?>
+        </li>
+        <?php endforeach ?>
+    </ul>
+<?php else: ?>
+    sorry , 没有符合条件的表
+<?php endif ?>

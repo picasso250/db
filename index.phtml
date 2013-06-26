@@ -1,0 +1,52 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>数据库字段自动填充 $fields</title>
+    <style type="text/css">
+    .code {
+        font-family: consolas;
+        font-size: small;
+    }
+    .code .kw {
+        color: #4880B3;
+    }
+    .code .field {
+        color: #8F702B;
+        font-weight: bold;
+    }
+    .code .str {
+        color: #188321;
+    }
+    .code .var {
+        color: #A445C9;
+    }
+    li {
+        padding: 3px 0;
+    }
+    .tbl-name {
+        font-family: arial;
+    }
+    .f-name {
+        font-family: arial;
+        font-size: small;
+    }
+    .tbl-cmt {
+        font-size:small;
+        color: #6F6F6F;
+    }
+    .f-cmt {
+        font-size:small;
+        color: #878A86;
+    }
+    .high-light {
+        background-color: #F3EC3E;
+    }
+    </style>
+</head>
+<body>
+    <?php if (_get('trans')): ?>
+        <?php include 'index-table.phtml' ?>
+    <?php else: ?>
+        <?php include 'index-list.phtml' ?>
+    <?php endif ?>
+</body>
