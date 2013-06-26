@@ -7,17 +7,6 @@
  * 有 bug，请去打击王霄池
  */
 
-function get_fields($table_name)
-{
-    // 将创建表中的field都提取出来
-    $fields = array();
-    $stmt = db_exec('SHOW FULL COLUMNS FROM '.$table_name);
-    while (($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
-        $fields[$row['Field']] = $row;
-    }
-    return $fields;
-}
-
 // 获得数据库，话说其实这就是单例模式，不过不是面向对象的
 function db_get()
 {
@@ -48,6 +37,17 @@ function db_exec($sql, $values = array())
         throw new Exception("error", 1);
     }
     return $stmt;
+}
+
+function get_fields($table_name)
+{
+    // 将创建表中的field都提取出来
+    $fields = array();
+    $stmt = db_exec('SHOW FULL COLUMNS FROM '.$table_name);
+    while (($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
+        $fields[$row['Field']] = $row;
+    }
+    return $fields;
 }
 
 function _get($key = null)
