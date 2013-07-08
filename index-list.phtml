@@ -5,6 +5,7 @@
     <select name="dbname">
         <option value="fy_me_cai" <?php echo _get('dbname') == 'fy_me_cai' ? 'selected' : '' ?>>me</option>
         <option value="fy_net_cai" <?php echo _get('dbname') == 'fy_net_cai' ? 'selected' : '' ?>>net</option>
+        <option value="fy_new_me" <?php echo _get('dbname') == 'fy_new_me' ? 'selected' : '' ?>>new_me</option>
     </select>
     <input type="text" name="table_like" value="<?php echo _get('table_like') ?>" placeholder="表名">
     <input type="text" name="field_like" value="<?php echo _get('field_like') ?>" placeholder="字段名">
@@ -19,7 +20,7 @@
         <?php foreach ($tables as $t): ?>
         <li>
             <strong title="">
-                <a class="tbl-name" href="?trans=<?php echo $t['table'] ?>"><?php echo high_light($t['table'], _get('table_like')) ?></a>
+                <a class="tbl-name" href="<?php echo _url(null, array('trans' => $t['table']), true) ?>"><?php echo high_light($t['table'], _get('table_like')) ?></a>
             </strong>
             <span class="tbl-cmt" ><?php echo $t['comment'] ?></span>
             <?php if (isset($t['field_matches']) && $t['field_matches']): ?>

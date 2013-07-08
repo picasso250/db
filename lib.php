@@ -64,6 +64,18 @@ function _post($key = null)
     }
     return isset($_POST[$key]) ? trim($_POST[$key]) : null;
 }
+function _url($url = null, $search = array(), $preserve = false)
+{
+    if ($preserve) {
+        $search = array_merge(_get(), $search);
+    }
+    if ($search) {
+        $query = '?'.http_build_query($search);
+    } else {
+        $query = '';
+    }
+    return $url.$query;
+}
 
 // 得到表的创建语句
 function get_create($table)
