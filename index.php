@@ -19,7 +19,9 @@ if (_get('trans')) {
     // 转换成 field 结构的 php 代码
     $field_code = '$this->fields = array('."\n";
     foreach ($fields as $field) {
-        $field_code .= "    '$field[Field]' => array('$field[Type]', '$field[Comment]', true),\n";
+        $type = reset(explode('(', $field['Type']));
+        $comment = reset(explode('{', $field['Comment']));
+        $field_code .= "    '$field[Field]' => array('$type', '$comment', true),\n";
     }
     $field_code .= ');';
 
