@@ -8,61 +8,96 @@
  */
 
 // 获得数据库，话说其实这就是单例模式，不过不是面向对象的
-function db_get()
+class ORM
 {
-    static $db;
-    $dbname = _get('dbname') ?: 'fy_me_cai';
-    if (is_null($db)) {
-        $db = new Pdo('mysql:host=master.mysql.fy;dbname='.$dbname, 'master', 'cnk6', array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-        ));
+    protected static $db;
+    protected static $config;
+
+    public static function config()
+    {
+        $num_args = func_num_args();
+        if ($num_args == 1) {
+            $arr = func_get_arg(0);
+            if (is_array($arr)) {
+                foreach ($arr as $k => $v) {
+                    self::$config[$k] = $v;
+                }
+            }
+        } elseif ($num_args == 2) {
+            $key = func_get_arg(0);
+            $value = func_get_arg(1);
+            self::$config[$key] = $value;
+        }
     }
-    return $db;
+
+    public static function db()
+    {
+        if (self::$db === null) {
+            $config = self::$config;
+            self::$db = new Pdo(
+                "mysql:host=$config[host];dbname=$config[dbname]", 
+                $config['username'], 
+                $config['password'], 
+                array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
+                )
+            );
+        }
+        return self::$db;
+    }
+    // 执行数据库的语句，支持参数变量
+    public static function exec($sql, $values = array())
+    {
+        $db = self::db();
+        $stmt = $db->prepare($sql);
+        $i = 0;
+        foreach ($values as $key => $value) {
+            $i++;
+            $stmt->bindValue($i, $value);
+        }
+        $stmt->execute();
+        $has_error = $stmt->errorCode() + 0;
+        if ($has_error) {
+            var_dump($stmt->errorInfo());
+            throw new Exception("error", 1);
+        }
+        return $stmt;
+    }
+
+    public static function get_fields($table_name)
+    {
+        // 将创建表中的field都提取出来
+        $fields = array();
+        $stmt = self::exec('SHOW FULL COLUMNS FROM '.$table_name);
+        while (($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
+            $fields[$row['Field']] = $row;
+        }
+        return $fields;
+    }
+
+
+    // 得到表的创建语句
+    public static function get_create($table)
+    {
+        $stmt = self::exec('SHOW CREATE TABLE '.$table);
+        $c =  end($stmt->fetch(PDO::FETCH_NUM));
+        return $c;
+    }
 }
 
-// 执行数据库的语句，支持参数变量
-function db_exec($sql, $values = array())
-{
-    $db = db_get();
-    $stmt = $db->prepare($sql);
-    $i = 0;
-    foreach ($values as $key => $value) {
-        $i++;
-        $stmt->bindValue($i, $value);
-    }
-    $stmt->execute();
-    $has_error = $stmt->errorCode() + 0;
-    if ($has_error) {
-        var_dump($stmt->errorInfo());
-        throw new Exception("error", 1);
-    }
-    return $stmt;
-}
-
-function get_fields($table_name)
-{
-    // 将创建表中的field都提取出来
-    $fields = array();
-    $stmt = db_exec('SHOW FULL COLUMNS FROM '.$table_name);
-    while (($row = $stmt->fetch(PDO::FETCH_ASSOC))) {
-        $fields[$row['Field']] = $row;
-    }
-    return $fields;
-}
-
-function _get($key = null)
+function _get($key = null, $or = null)
 {
     if ($key === null) {
         return $_GET;
     }
-    return isset($_GET[$key]) ? trim($_GET[$key]) : null;
+    return isset($_GET[$key]) ? trim($_GET[$key]) : $or;
 }
-function _post($key = null)
+function _post($key = null, $or = null)
 {
     if ($key === null) {
         return $_POST;
     }
-    return isset($_POST[$key]) ? trim($_POST[$key]) : null;
+    return isset($_POST[$key]) ? trim($_POST[$key]) : $or;
 }
 function _url($url = null, $search = array(), $preserve = false)
 {
@@ -77,13 +112,6 @@ function _url($url = null, $search = array(), $preserve = false)
     return $url.$query;
 }
 
-// 得到表的创建语句
-function get_create($table)
-{
-    $stmt = db_exec('SHOW CREATE TABLE '.$table);
-    $c =  end($stmt->fetch(PDO::FETCH_NUM));
-    return $c;
-}
 
 // 给代码加高亮
 function code_format($code)

@@ -2,8 +2,15 @@
 
 <!-- 搜索表单 -->
 <form>
+    <select name="connection">
+        <?php foreach ($connections as $key => $value): ?>
+            <option value="<?php echo $key ?>" <?php echo _get('connection') === strval($key) ? 'selected' : '' ?>><?php echo $value['host'] ?></option>
+        <?php endforeach ?>
+    </select>
     <select name="dbname">
-        <option value="fy_me_cai" <?php echo _get('dbname') == 'fy_me_cai' ? 'selected' : '' ?>>me</option>
+        <?php foreach ($dbnames as $key => $value): ?>
+            <option value="<?php echo $key ?>" <?php echo _get('dbname') === strval($key) ? 'selected' : '' ?>><?php echo $value ?></option>
+        <?php endforeach ?>
         <option value="fy_net_cai" <?php echo _get('dbname') == 'fy_net_cai' ? 'selected' : '' ?>>net</option>
         <option value="fy_new_me" <?php echo _get('dbname') == 'fy_new_me' ? 'selected' : '' ?>>new_me</option>
     </select>
