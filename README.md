@@ -1,4 +1,4 @@
 db
 ==
 
-db look up , utils , to fields , etc.
+搜索数据库中的表，字段名。
