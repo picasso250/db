@@ -45,6 +45,7 @@ class ORM
         }
         return self::$db;
     }
+
     // 执行数据库的语句，支持参数变量
     public static function exec($sql, $values = array())
     {
@@ -90,15 +91,16 @@ function _get($key = null, $or = null)
     if ($key === null) {
         return $_GET;
     }
-    return isset($_GET[$key]) ? trim($_GET[$key]) : $or;
+    return isset($_GET[$key]) ? $_GET[$key] : $or;
 }
 function _post($key = null, $or = null)
 {
     if ($key === null) {
         return $_POST;
     }
-    return isset($_POST[$key]) ? trim($_POST[$key]) : $or;
+    return isset($_POST[$key]) ? $_POST[$key] : $or;
 }
+
 function _url($url = null, $search = array(), $preserve = false)
 {
     if ($preserve) {
