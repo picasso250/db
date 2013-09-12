@@ -7,13 +7,13 @@
 return array(
     'connections' => array(
         array(
-            'host' => 'master.mysql.fy',
-            'username' => 'master',
-            'password' => 'cnk6',
+            'host' => 'baidu.com',
+            'username' => 'x',
+            'password' => 'x',
             'dbnames' => array(
-                'fy_me_cai',
-                'fy_net_cai',
-                'fy_new_me',
+                'f',
+                'z',
+                'f',
             ),
         ),
         array(
@@ -21,9 +21,7 @@ return array(
             'username' => 'root',
             'password' => '',
             'dbnames' => array(
-                'fdd_customers',
-                'fangyun',
-                'www_fangdd_com',
+                'test',
             ),
         )
     ),

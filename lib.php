@@ -77,11 +77,11 @@ class ORM
 
 
     // 得到表的创建语句
-    public static function get_create($table)
+    public static function get_create($table, $type = 'TABLE')
     {
-        $stmt = self::exec('SHOW CREATE TABLE '.$table);
-        $c =  end($stmt->fetch(PDO::FETCH_NUM));
-        return $c;
+        $stmt = self::exec("SHOW CREATE $type $table");
+        $row = $stmt->fetch(PDO::FETCH_NUM);
+        return $row[1];
     }
 }
 
@@ -105,7 +105,7 @@ function _url($url = null, $search = array(), $preserve = false)
         $search = array_merge(_get(), $search);
     }
     if ($search) {
-        $query = '?'.http_build_query($search);
+        $query = '?'.htmlspecialchars(http_build_query($search));
     } else {
         $query = '';
     }

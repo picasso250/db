@@ -1,34 +1,33 @@
-<h1><?php echo _get('trans') ?></h1>
+<h1><?php echo $table ?></h1>
 <div>
     <a href="<?php echo _url(null, array('dbname' => _get('dbname'))) ?>">回到列表</a>
 </div>
-<h3>表结构</h3>
+<h3><?php echo $type == 'VIEW' ? '视图结构' : '表结构' ?></h3>
 <table class="table">
-    <thead>
-        <tr>
-            <th>字段名</th>
-            <th>类型</th>
-            <th>默认值</th>
-            <th>注释</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($fields as $field): ?>
-            <tr>
-                <td class="<?php echo $field['Key'] ?>">
-                    <?php echo $field['Field'] ?>
-                    <?php if ($field['Key']): ?>
-                        <sub><?php echo $field['Key'] ?></sub>
-                    <?php endif ?>
-                </td>
-                <td><?php echo $field['Type'] ?></td>
-                <td><?php echo $field['Default'] ?></td>
-                <td><?php echo nl2br($field['Comment']) ?></td>
-            </tr>
-        <?php endforeach ?>
-    </tbody>
+  <thead>
+    <tr>
+      <th>字段名</th>
+      <th>类型</th>
+      <th>默认值</th>
+      <th>注释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($fields as $field): ?>
+    <tr>
+      <td class="<?php echo $field['Key'] ?>">
+        <?php echo $field['Field'] ?>
+        <?php if ($field['Key']): ?>
+          <sub><?php echo $field['Key'] ?></sub>
+        <?php endif ?>
+      </td>
+      <td><?php echo $field['Type'] ?></td>
+      <td><?php echo $field['Default'] ?></td>
+      <td><?php echo nl2br($field['Comment']) ?></td>
+    </tr>
+    <?php endforeach ?>
+  </tbody>
 </table>
-<h3>创建表语句</h3>
+<h3><?php echo $type ? '创建视图语句' : '创建表语句' ?></h3>
 <p class="code"><?php echo code_format($create) ?></p>
-<h3>表单验证域(粗糙，需人工修改，勿直接使用)</h3>
-<p class="code"><?php echo code_format($field_code) ?></p>
+

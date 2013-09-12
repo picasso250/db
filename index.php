@@ -23,26 +23,19 @@ $dbnames = $host_info['dbnames'];
 $dbname = $dbnames[$dbname_index];
 ORM::config('dbname', $dbname);
 
-if (_get('trans')) {
-    $create = ORM::get_create(_get('trans'));
-    $fields = ORM::get_fields(_get('trans'));
+if ($table = _get('t')) {
+    $type = _get('type');
+    $create = ORM::get_create($table);
+    $fields = ORM::get_fields($table);
 
-    // 转换成 field 结构的 php 代码
-    $field_code = '$this->fields = array('."\n";
-    foreach ($fields as $field) {
-        $type = reset(explode('(', $field['Type']));
-        $comment = reset(explode('{', $field['Comment']));
-        $field_code .= "    '$field[Field]' => array('$type', '$comment', true),\n";
-    }
-    $field_code .= ');';
-
+    $tpl = 'index-table';
 } else {
     // 获取表的列表，支持关键字搜索
     $t = _get('table_like');
     if ($t) {
-        $stmt = ORM::exec("SHOW TABLES LIKE ?", array("%$t%"));
+        $stmt = ORM::exec("SHOW FULL TABLES LIKE ?", array("%$t%"));
     } else {
-        $stmt = ORM::exec("SHOW TABLES");
+        $stmt = ORM::exec("SHOW FULL TABLES");
     }
 
     $f = _get('field_like');
@@ -50,14 +43,16 @@ if (_get('trans')) {
     // 获得表的注释，并将列表存在数组里
     $tables = array();
     while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
-        $table = reset($row);
+        $table = $row[0];
+        $arr = explode(' ', $row[1]);
+        $type = end($arr);
         if (preg_match('/#/', $table)) {
             continue;
         }
         $create = ORM::get_create($table);
         $rs = preg_match("/ENGINE=.+COMMENT='(.+)'$/", $create, $matches);
         $comment = $rs ? $matches[1] : '';
-        $table_info = compact('table', 'comment', 'create');
+        $table_info = compact('table', 'type', 'comment', 'create');
         $found = true;
         if ($f) {
             $found = false;
@@ -74,6 +69,8 @@ if (_get('trans')) {
             $tables[] = $table_info;
         }
     }
+
+    $tpl = 'index-list';
 }
 
 // render

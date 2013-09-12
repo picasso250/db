@@ -2,45 +2,49 @@
 
 <!-- 搜索表单 -->
 <form>
-    <select name="connection">
-        <?php foreach ($connections as $key => $value): ?>
-            <option value="<?php echo $key ?>" <?php echo _get('connection') === strval($key) ? 'selected' : '' ?>><?php echo $value['host'] ?></option>
-        <?php endforeach ?>
-    </select>
-    <select name="dbname">
-        <?php foreach ($dbnames as $key => $value): ?>
-            <option value="<?php echo $key ?>" <?php echo _get('dbname') === strval($key) ? 'selected' : '' ?>><?php echo $value ?></option>
-        <?php endforeach ?>
-    </select>
-    <input type="text" name="table_like" value="<?php echo _get('table_like') ?>" placeholder="表名">
-    <input type="text" name="field_like" value="<?php echo _get('field_like') ?>" placeholder="字段名">
-    <input type="submit" value="搜索">
+  <label>　主机：</label>
+  <select name="connection">
+    <?php foreach ($connections as $key => $value): ?>
+    <option value="<?php echo $key ?>" <?php echo _get('connection') === strval($key) ? 'selected' : '' ?>><?php echo $value['host'] ?></option>
+    <?php endforeach ?>
+  </select>
+  <label>　数据库：</label>
+  <select name="dbname">
+    <?php foreach ($dbnames as $key => $value): ?>
+      <option value="<?php echo $key ?>" <?php echo _get('dbname') === strval($key) ? 'selected' : '' ?>><?php echo $value ?></option>
+    <?php endforeach ?>
+  </select>
+  <label>　表名：</label>
+  <input type="text" name="table_like" value="<?php echo _get('table_like') ?>" placeholder="表名">
+  <label>　字段名：</label>
+  <input type="text" name="field_like" value="<?php echo _get('field_like') ?>" placeholder="字段名">
+  <input type="submit" value="搜索">
 </form>
 
 <span class="tbl-cmt">共 <?php echo count($tables) ?> 个表</span>
 
 <!-- 搜索结果 -->
 <?php if ($tables): ?>
+<ul>
+  <?php foreach ($tables as $t): ?>
+  <li>
+    <strong title="">
+      <a class="tbl-name" href="<?php echo _url(null, array('t' => $t['table'], 'type' => $t['type']), true) ?>"><?php echo high_light($t['table'], _get('table_like')) ?></a>
+    </strong>
+    <span class="tbl-cmt" ><?php echo $t['type'] == 'VIEW' ? '视图 ' : '', $t['comment'] ?></span>
+    <?php if (isset($t['field_matches']) && $t['field_matches']): ?>
     <ul>
-        <?php foreach ($tables as $t): ?>
-        <li>
-            <strong title="">
-                <a class="tbl-name" href="<?php echo _url(null, array('trans' => $t['table']), true) ?>"><?php echo high_light($t['table'], _get('table_like')) ?></a>
-            </strong>
-            <span class="tbl-cmt" ><?php echo $t['comment'] ?></span>
-            <?php if (isset($t['field_matches']) && $t['field_matches']): ?>
-                <ul>
-                    <?php foreach ($t['field_matches'] as $f): ?>
-                        <li>
-                            <span class="f-name"><?php echo high_light($f['Field'], _get('field_like')) ?></span>
-                            <span class="f-cmt"><?php echo $f['Comment'] ?></span>
-                        </li>
-                    <?php endforeach ?>
-                </ul>
-            <?php endif ?>
-        </li>
-        <?php endforeach ?>
+      <?php foreach ($t['field_matches'] as $f): ?>
+      <li>
+        <span class="f-name"><?php echo high_light($f['Field'], _get('field_like')) ?></span>
+        <span class="f-cmt"><?php echo $f['Comment'] ?></span>
+      </li>
+      <?php endforeach ?>
     </ul>
+    <?php endif ?>
+  </li>
+  <?php endforeach ?>
+</ul>
 <?php else: ?>
     sorry , 没有符合条件的表
 <?php endif ?>
