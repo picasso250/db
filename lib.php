@@ -10,7 +10,7 @@
 // 获得数据库，话说其实这就是单例模式，不过不是面向对象的
 class ORM
 {
-    protected static $db;
+    protected static $db = array();
     protected static $config;
 
     public static function config()
@@ -32,18 +32,22 @@ class ORM
 
     public static function db()
     {
-        if (self::$db === null) {
-            $config = self::$config;
-            self::$db = new Pdo(
-                "mysql:host=$config[host];dbname=$config[dbname]", 
-                $config['username'], 
-                $config['password'], 
-                array(
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'',
-                )
-            );
+        $config = self::$config;
+        $dsn = "mysql:host=$config[host]";
+        $options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES UTF8');
+        if (!isset($config['dbname'])) {
+            if (!isset(self::$db[0])) {
+                self::$db[0] = new Pdo($dsn, $config['username'], $config['password'], $options);
+            }
+            return self::$db[0];
+        } else {
+            $dbname = $config['dbname'];
+            if (!isset(self::$db[$dbname])) {
+                $dsn .= ";dbname=$dbname";
+                self::$db[$dbname] = new Pdo($dsn, $config['username'], $config['password'], $options);
+            }
+            return self::$db[$dbname];
         }
-        return self::$db;
     }
 
     // 执行数据库的语句，支持参数变量
@@ -63,6 +67,16 @@ class ORM
             throw new Exception("error", 1);
         }
         return $stmt;
+    }
+
+    public static function getDataBases()
+    {
+        $ret = array();
+        $stmt = self::exec('show databases');
+        while (($row = $stmt->fetch(PDO::FETCH_NUM))) {
+            $ret[] = reset($row);
+        }
+        return $ret;
     }
 
     public static function get_fields($table_name)

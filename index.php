@@ -19,7 +19,11 @@ $connections = $config['connections'];
 $host_info = $connections[$host_index];
 ORM::config($host_info);
 $dbname_index = _get('dbname', 0);
-$dbnames = $host_info['dbnames'];
+if (isset($host_info['dbnames']) && $host_info['dbnames'] !== true) {
+    $dbnames = $host_info['dbnames'];
+} else {
+    $dbnames = ORM::getDataBases();
+}
 $dbname = $dbnames[$dbname_index];
 ORM::config('dbname', $dbname);
 
