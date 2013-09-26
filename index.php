@@ -17,29 +17,29 @@ $config = require 'config.php';
 $host_index = _get('connection', 0);
 $connections = $config['connections'];
 $host_info = $connections[$host_index];
-ORM::config($host_info);
+DbWrapper::config($host_info);
 $dbname_index = _get('dbname', 0);
 if (isset($host_info['dbnames']) && $host_info['dbnames'] !== true) {
     $dbnames = $host_info['dbnames'];
 } else {
-    $dbnames = ORM::getDataBases();
+    $dbnames = DbWrapper::getDataBases();
 }
 $dbname = $dbnames[$dbname_index];
-ORM::config('dbname', $dbname);
+DbWrapper::config('dbname', $dbname);
 
 if ($table = _get('t')) {
     $type = _get('type');
-    $create = ORM::get_create($table);
-    $fields = ORM::get_fields($table);
+    $create = DbWrapper::getCreate($table);
+    $fields = DbWrapper::getFields($table);
 
     $tpl = 'index-table';
 } else {
     // 获取表的列表，支持关键字搜索
     $t = _get('table_like');
     if ($t) {
-        $stmt = ORM::exec("SHOW FULL TABLES LIKE ?", array("%$t%"));
+        $stmt = DbWrapper::exec("SHOW FULL TABLES LIKE ?", array("%$t%"));
     } else {
-        $stmt = ORM::exec("SHOW FULL TABLES");
+        $stmt = DbWrapper::exec("SHOW FULL TABLES");
     }
 
     $f = _get('field_like');
@@ -53,7 +53,7 @@ if ($table = _get('t')) {
         if (preg_match('/#/', $table)) {
             continue;
         }
-        $create = ORM::get_create($table);
+        $create = DbWrapper::getCreate($table);
         $rs = preg_match("/ENGINE=.+COMMENT='(.+)'$/", $create, $matches);
         $comment = $rs ? $matches[1] : '';
         $table_info = compact('table', 'type', 'comment', 'create');
@@ -61,7 +61,7 @@ if ($table = _get('t')) {
         if ($f) {
             $found = false;
             // 这里可以用 like 语句-
-            $fields = ORM::get_fields($table);
+            $fields = DbWrapper::getFields($table);
             foreach ($fields as $field) {
                 if (preg_match('/'.$f.'/', $field['Field'])) {
                     $table_info['find_field'] = $found = true;

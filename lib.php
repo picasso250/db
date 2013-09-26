@@ -7,12 +7,12 @@
  * 有 bug，请去打击王霄池
  */
 
-// 获得数据库，话说其实这就是单例模式，不过不是面向对象的
-class ORM
+class DbWrapper
 {
     protected static $db = array();
     protected static $config;
 
+    // 配置
     public static function config()
     {
         $num_args = func_num_args();
@@ -30,6 +30,7 @@ class ORM
         }
     }
 
+    // 得到数据库
     public static function db()
     {
         $config = self::$config;
@@ -69,17 +70,19 @@ class ORM
         return $stmt;
     }
 
+    //　得到数据库列表
     public static function getDataBases()
     {
         $ret = array();
-        $stmt = self::exec('show databases');
+        $stmt = self::exec('SHOW DATABASES');
         while (($row = $stmt->fetch(PDO::FETCH_NUM))) {
             $ret[] = reset($row);
         }
         return $ret;
     }
 
-    public static function get_fields($table_name)
+    //　得到表的字段列表
+    public static function getFields($table_name)
     {
         // 将创建表中的field都提取出来
         $fields = array();
@@ -90,9 +93,8 @@ class ORM
         return $fields;
     }
 
-
     // 得到表的创建语句
-    public static function get_create($table, $type = 'TABLE')
+    public static function getCreate($table, $type = 'TABLE')
     {
         $stmt = self::exec("SHOW CREATE $type $table");
         $row = $stmt->fetch(PDO::FETCH_NUM);
@@ -127,7 +129,6 @@ function _url($url = null, $search = array(), $preserve = false)
     }
     return $url.$query;
 }
-
 
 // 给代码加高亮
 function code_format($code)

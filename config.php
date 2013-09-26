@@ -7,21 +7,19 @@
 return array(
     'connections' => array(
         array(
-            'host' => 'baidu.com',
-            'username' => 'x',
-            'password' => 'x',
-            'dbnames' => array(
-                'f',
-                'z',
-                'f',
-            ),
+            'host' => 'master.mysql.fy',
+            'username' => 'master',
+            'password' => 'cnk6',
+            'dbnames' => true,
         ),
         array(
             'host' => 'localhost',
             'username' => 'root',
             'password' => '',
             'dbnames' => array(
-                'test',
+                'fdd_customers',
+                'fangyun',
+                'www_fangdd_com',
             ),
         )
     ),
