@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * 配置
+ */
+
+return array(
+    'connections' => array(
+        array(
+            'host' => 'localhost',
+            'username' => 'root',
+            'password' => '',
+        ),
+        array(
+            'host' => 'master.mysql',
+            'username' => 'master',
+            'password' => 'master',
+            'dbnames' => array(
+                'database1',
+                'database2',
+                'database3',
+            ),
+        ),
+    ),
+);
