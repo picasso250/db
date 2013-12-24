@@ -64,6 +64,7 @@ class DbWrapper
         $stmt->execute();
         $has_error = $stmt->errorCode() + 0;
         if ($has_error) {
+            echo "$sql\n";
             var_dump($stmt->errorInfo());
             throw new Exception("error", 1);
         }
@@ -96,7 +97,7 @@ class DbWrapper
     // 得到表的创建语句
     public static function getCreate($table, $type = 'TABLE')
     {
-        $stmt = self::exec("SHOW CREATE $type $table");
+        $stmt = self::exec("SHOW CREATE $type `$table`");
         $row = $stmt->fetch(PDO::FETCH_NUM);
         return $row[1];
     }
@@ -145,6 +146,9 @@ function code_format($code)
 // 给搜索关键字加高亮
 function high_light($str, $kw)
 {
-    return preg_replace('/'.$kw.'/', '<span class="high-light">'.$kw.'</span>', $str);
+    if ($kw) {
+        $str = preg_replace('/'.$kw.'/u', '<span class="high-light">'.$kw.'</span>', $str);
+    }
+    return $str;
 }
 
